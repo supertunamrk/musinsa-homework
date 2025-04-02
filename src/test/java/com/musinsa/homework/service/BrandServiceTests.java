@@ -2,6 +2,8 @@ package com.musinsa.homework.service;
 
 import com.musinsa.homework.dto.BrandCreateRequest;
 import com.musinsa.homework.dto.BrandUpdateRequest;
+import com.musinsa.homework.enums.BrandErrorType;
+import com.musinsa.homework.exception.ApiRuntimeException;
 import com.musinsa.homework.repository.BrandRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +16,7 @@ import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 class BrandServiceTests {
@@ -58,7 +61,6 @@ class BrandServiceTests {
         // Arrange
         var sut = new BrandService(brandRepository);
         sut.createBrand(new BrandCreateRequest("Adidas", "이대호"));
-        System.out.println(brandRepository.count());
         var brand = brandRepository.findAll().get(0);
         var request = new BrandUpdateRequest(brand.getId(), "Nike", "이정후");
 
@@ -73,5 +75,18 @@ class BrandServiceTests {
                 () -> assertThat(actual.getModifiedBy()).isEqualTo(request.getModifiedBy()),
                 () -> assertThat(actual.getRegisteredBy()).isNotEqualTo(actual.getModifiedBy()),
                 () -> assertThat(actual.getModifiedDateTime().isAfter(actual.getRegisteredDateTime())).isTrue());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 브랜드에 대한 수정시 예외 발생")
+    void throw_exception_when_modify_not_exist_brand() {
+        // Arrange
+        var sut = new BrandService(brandRepository);
+        var request = new BrandUpdateRequest(1L, "Nike", "이정후");
+
+        // Assert & Act
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.updateBrand(request));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.NOT_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.NOT_EXIST.getMessage()));
     }
 }
