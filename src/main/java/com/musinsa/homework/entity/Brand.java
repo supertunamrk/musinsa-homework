@@ -12,7 +12,7 @@ public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
     @Column(name = "reg_by", nullable = false)
     private String registeredBy;
@@ -29,7 +29,7 @@ public class Brand {
     }
 
     public Brand(String name, String registeredBy, String modifiedBy) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.registeredBy = registeredBy;
         this.modifiedBy = modifiedBy;
     }

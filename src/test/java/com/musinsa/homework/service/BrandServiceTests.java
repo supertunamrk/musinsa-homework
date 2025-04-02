@@ -47,7 +47,7 @@ class BrandServiceTests {
         assertThat(brandRepository.count()).isEqualTo(1);
         var actual = brandRepository.findAll().get(0);
         assertAll(() -> assertThat(actual.getId()).isEqualTo(1L),
-                () -> assertThat(actual.getName()).isEqualTo(request.getName()),
+                () -> assertThat(actual.getName()).isEqualToIgnoringCase(request.getName()),
                 () -> assertThat(actual.getRegisteredBy()).isEqualTo(request.getRegisteredBy()),
                 () -> assertThat(actual.getRegisteredBy()).isEqualTo(actual.getModifiedBy()),
                 () -> assertThat(actual.getRegisteredDateTime()).isNotNull(),
