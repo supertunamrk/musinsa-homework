@@ -13,6 +13,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long brandId;
     private Long categoryId;
     private Integer basePriceKRW;
     private BigDecimal basePriceUSD;
@@ -30,7 +31,8 @@ public class Product {
     protected Product() {
     }
 
-    public Product(Long categoryId, Integer basePriceKRW, BigDecimal basePriceUSD, String registeredBy) {
+    public Product(Long brandId, Long categoryId, Integer basePriceKRW, BigDecimal basePriceUSD, String registeredBy) {
+        this.brandId = brandId;
         this.categoryId = categoryId;
         this.basePriceKRW = basePriceKRW;
         this.basePriceUSD = basePriceUSD;
@@ -40,6 +42,14 @@ public class Product {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Long brandId) {
+        this.brandId = brandId;
     }
 
     public Long getCategoryId() {

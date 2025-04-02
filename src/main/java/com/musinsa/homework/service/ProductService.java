@@ -26,7 +26,7 @@ public class ProductService {
     public void createProduct(ProductCreateRequest productCreateRequest) {
         categoryRepository.findById(productCreateRequest.getCategoryId()).orElseThrow((() -> new ApiRuntimeException(ProductErrorType.CANNOT_ADD_WITH_NOT_EXIST_CATEGORY)));
 
-        var product = new Product(productCreateRequest.getCategoryId(),
+        var product = new Product(productCreateRequest.getBrandId(), productCreateRequest.getCategoryId(),
                 productCreateRequest.getBasePriceKRW(), this.toBigDecimal(productCreateRequest.getBasePriceUSD()), productCreateRequest.getRegisteredBy());
 
         productRepository.save(product);
