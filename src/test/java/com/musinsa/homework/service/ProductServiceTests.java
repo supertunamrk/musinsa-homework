@@ -6,10 +6,12 @@ import com.musinsa.homework.enums.ProductErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
 import com.musinsa.homework.repository.CategoryRepository;
 import com.musinsa.homework.repository.ProductRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
@@ -20,12 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 public class ProductServiceTests {
+    private final JdbcTemplate jdbcTemplate;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public ProductServiceTests(@Autowired ProductRepository productRepository, @Autowired CategoryRepository categoryRepository) {
+    public ProductServiceTests(@Autowired JdbcTemplate jdbcTemplate, @Autowired ProductRepository productRepository, @Autowired CategoryRepository categoryRepository) {
+        this.jdbcTemplate = jdbcTemplate;
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+    }
+
+    @BeforeEach
+    void truncateTable() {
+        jdbcTemplate.execute("TRUNCATE TABLE product RESTART IDENTITY");
     }
 
     @Test

@@ -32,7 +32,11 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    @Transactional
     public void updateProduct(ProductUpdateRequest productUpdateRequest) {
+        var product = productRepository.findById(productUpdateRequest.getId()).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.NOT_EXIST));
+
+        product.modify(productUpdateRequest.getBasePriceKRW(), this.toBigDecimal(productUpdateRequest.getBasePriceUSD()), productUpdateRequest.getModifiedBy());
     }
 
     private BigDecimal toBigDecimal(String target) {

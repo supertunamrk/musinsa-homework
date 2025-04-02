@@ -69,4 +69,10 @@ public class Product {
     public LocalDateTime getModifiedDateTime() {
         return modifiedDateTime;
     }
+
+    public void modify(Integer basePriceKRW, BigDecimal basePriceUSD, String modifiedBy) {
+        this.basePriceKRW = basePriceKRW;
+        this.basePriceUSD = basePriceUSD;
+        this.modifiedBy = modifiedBy;
+    }
 }
