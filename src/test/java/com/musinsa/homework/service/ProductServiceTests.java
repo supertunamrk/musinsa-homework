@@ -31,7 +31,7 @@ public class ProductServiceTests {
     @DisplayName("상품 추가")
     void add_product() {
         // Arrange
-        var sut = new ProductService(productRepository);
+        var sut = new ProductService(productRepository, categoryRepository);
         var category = categoryRepository.findAll().get(0);
         var request = new ProductCreateRequest(category.getId(), 10000, "10.11", "이대호");
 
@@ -54,7 +54,7 @@ public class ProductServiceTests {
     @DisplayName("존재하지 않는 카테고리에 대한 상품 추가에 대한 예외 발생")
     void throw_exception_when_add_not_exist_category() {
         // Arrange
-        var sut = new ProductService(productRepository);
+        var sut = new ProductService(productRepository, categoryRepository);
         var request = new ProductCreateRequest(categoryRepository.count() + 1, 10000, "10.11", "이대호");
 
         // Act & Assert

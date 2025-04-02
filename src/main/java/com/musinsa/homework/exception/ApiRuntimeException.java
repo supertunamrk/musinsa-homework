@@ -1,14 +1,14 @@
 package com.musinsa.homework.exception;
 
-import com.musinsa.homework.enums.BrandErrorType;
+import com.musinsa.homework.enums.ErrorType;
 
 public class ApiRuntimeException extends RuntimeException {
     private final String errorCode;
     private final String errorMessage;
 
-    public ApiRuntimeException(BrandErrorType brandErrorType) {
-        this.errorCode = brandErrorType.getCode();
-        this.errorMessage = brandErrorType.getMessage();
+    public ApiRuntimeException(ErrorType errorType) {
+        this.errorCode = errorType.getCode();
+        this.errorMessage = errorType.getMessage();
     }
 
     public String getErrorCode() {

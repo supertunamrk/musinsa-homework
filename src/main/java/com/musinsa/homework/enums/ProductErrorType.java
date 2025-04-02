@@ -1,6 +1,6 @@
 package com.musinsa.homework.enums;
 
-public enum ProductErrorType {
+public enum ProductErrorType implements ErrorType {
     CANNOT_ADD_WITH_NOT_EXIST_CATEGORY("P0001", "존재하지 않는 카테고리로의 상품 추가는 불가능 합니다.");
 
     private final String code;
@@ -11,10 +11,12 @@ public enum ProductErrorType {
         this.message = message;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public String getMessage() {
         return message;
     }
