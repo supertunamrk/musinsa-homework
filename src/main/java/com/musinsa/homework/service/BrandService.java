@@ -3,6 +3,8 @@ package com.musinsa.homework.service;
 import com.musinsa.homework.dto.BrandCreateRequest;
 import com.musinsa.homework.dto.BrandUpdateRequest;
 import com.musinsa.homework.entity.Brand;
+import com.musinsa.homework.enums.BrandErrorType;
+import com.musinsa.homework.exception.ApiRuntimeException;
 import com.musinsa.homework.repository.BrandRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,7 @@ public class BrandService {
     }
 
     public void updateBrand(BrandUpdateRequest brandUpdateRequest) {
-        var brand = brandRepository.findById(brandUpdateRequest.getId()).orElseThrow();
+        var brand = brandRepository.findById(brandUpdateRequest.getId()).orElseThrow(() -> new ApiRuntimeException(BrandErrorType.NOT_EXIST));
 
         brand.modify(brandUpdateRequest.getName(), brandUpdateRequest.getModifiedBy());
     }
