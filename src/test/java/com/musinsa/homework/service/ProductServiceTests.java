@@ -1,6 +1,8 @@
 package com.musinsa.homework.service;
 
 import com.musinsa.homework.dto.ProductCreateRequest;
+import com.musinsa.homework.enums.ProductErrorType;
+import com.musinsa.homework.exception.ApiRuntimeException;
 import com.musinsa.homework.repository.CategoryRepository;
 import com.musinsa.homework.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 public class ProductServiceTests {
@@ -45,5 +48,18 @@ public class ProductServiceTests {
                 () -> assertThat(actual.getRegisteredDateTime()).isNotNull(),
                 () -> assertThat(actual.getModifiedDateTime()).isNotNull(),
                 () -> assertThat(actual.getRegisteredDateTime().truncatedTo(ChronoUnit.SECONDS)).isEqualTo(actual.getModifiedDateTime().truncatedTo(ChronoUnit.SECONDS)));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 카테고리에 대한 상품 추가에 대한 예외 발생")
+    void throw_exception_when_add_not_exist_category() {
+        // Arrange
+        var sut = new ProductService(productRepository);
+        var request = new ProductCreateRequest(categoryRepository.count() + 1, 10000, "10.11", "이대호");
+
+        // Act & Assert
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.createProduct(request));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_ADD_WITH_NOT_EXIST_CATEGORY.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_ADD_WITH_NOT_EXIST_CATEGORY.getMessage()));
     }
 }
