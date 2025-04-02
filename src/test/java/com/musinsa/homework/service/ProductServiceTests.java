@@ -44,10 +44,10 @@ class ProductServiceTests {
     }
 
     @Test
-    @DisplayName("상품 추가")
-    void add_product() {
+    @DisplayName("상품 생성")
+    void create_product() {
         // Arrange
-        var sut = new ProductService(productRepository, categoryRepository);
+        var sut = new ProductService(brandRepository, productRepository, categoryRepository);
         var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
         var category = categoryRepository.findAll().get(0);
         var request = new ProductCreateRequest(brand.getId(), category.getId(), 10000, "10.11", "이대호");
@@ -70,51 +70,52 @@ class ProductServiceTests {
     }
 
     @Test
-    @DisplayName("존재하지 않는 브랜드에 상품 추가를 할 경우 예외 발생")
-    void throw_exception_when_add_not_exist_brand() {
+    @DisplayName("존재하지 않는 브랜드에 상품 생성을 할 경우 예외 발생")
+    void throw_exception_when_create_not_exist_brand() {
         // Arrange
-        var sut = new ProductService(productRepository, categoryRepository);
+        var sut = new ProductService(brandRepository, productRepository, categoryRepository);
         var request = new ProductCreateRequest(1L, 1L, 10000, "10.11", "이대호");
 
         // Act & Assert
         var actual = assertThrows(ApiRuntimeException.class, () -> sut.createProduct(request));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_ADD_WITH_NOT_EXIST_BRAND.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_ADD_WITH_NOT_EXIST_BRAND.getMessage()));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_CREATE_NOT_EXIST_BRAND.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_CREATE_NOT_EXIST_BRAND.getMessage()));
     }
 
     @Test
-    @DisplayName("존재하지 않는 카테고리에 상품 추가를 할 경우 예외 발생")
-    void throw_exception_when_add_not_exist_category() {
+    @DisplayName("존재하지 않는 카테고리에 상품 생성을 할 경우 예외 발생")
+    void throw_exception_when_create_not_exist_category() {
         // Arrange
-        var sut = new ProductService(productRepository, categoryRepository);
+        var sut = new ProductService(brandRepository, productRepository, categoryRepository);
         var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
         var request = new ProductCreateRequest(brand.getId(), categoryRepository.count() + 1, 10000, "10.11", "이대호");
 
         // Act & Assert
         var actual = assertThrows(ApiRuntimeException.class, () -> sut.createProduct(request));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_ADD_WITH_NOT_EXIST_CATEGORY.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_ADD_WITH_NOT_EXIST_CATEGORY.getMessage()));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_CREATE_NOT_EXIST_CATEGORY.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_CREATE_NOT_EXIST_CATEGORY.getMessage()));
     }
 
     @Test
     @DisplayName("상품 수정")
-    void update_product() {
+    void modify_product() {
         // Arrange
-        var sut = new ProductService(productRepository, categoryRepository);
-        var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
-        sut.createProduct(new ProductCreateRequest(brand.getId(), 1L, 10000, "10.11", "이대호"));
+        var sut = new ProductService(brandRepository, productRepository, categoryRepository);
+        var brand1 = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
+        var brand2 = brandRepository.save(new Brand("Nike", "이대호", "이대호"));
+        sut.createProduct(new ProductCreateRequest(brand1.getId(), 1L, 10000, "10.11", "이대호"));
         var product = productRepository.findAll().get(0);
-        var request = new ProductUpdateRequest(product.getId(), brand.getId(), 1L, 5000, "5.55", "이정후");
+        var request = new ProductUpdateRequest(product.getId(), brand2.getId(), 2L, 5000, "5.55", "이정후");
 
         // Act
-        sut.updateProduct(request);
+        sut.modifyProduct(request);
 
         // Assert
         assertThat(productRepository.findAll()).hasSize(1);
         var actual = productRepository.findAll().get(0);
         assertAll(() -> assertThat(actual.getId()).isEqualTo(1L),
-                () -> assertThat(actual.getBrandId()).isEqualTo(1L),
-                () -> assertThat(actual.getCategoryId()).isEqualTo(1L),
+                () -> assertThat(actual.getBrandId()).isEqualTo(brand2.getId()),
+                () -> assertThat(actual.getCategoryId()).isEqualTo(2L),
                 () -> assertThat(actual.getBasePriceKRW()).isEqualTo(request.getBasePriceKRW()),
                 () -> assertThat(actual.getBasePriceUSD()).isEqualTo(new BigDecimal(request.getBasePriceUSD())),
                 () -> assertThat(actual.getModifiedBy()).isEqualTo(request.getModifiedBy()),
@@ -126,38 +127,43 @@ class ProductServiceTests {
     @DisplayName("존재하지 않는 상품에 대한 수정시 예외 발생")
     void throw_exception_when_modify_not_exist_product() {
         // Arrange
-        var sut = new ProductService(productRepository, categoryRepository);
-        var request = new ProductUpdateRequest(1L, 1L, 1L, 5000, "5.55", "이정후");
+        var sut = new ProductService(brandRepository, productRepository, categoryRepository);
+        var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
+        var request = new ProductUpdateRequest(1L, brand.getId(), 1L, 5000, "5.55", "이정후");
 
         // Assert & Act
-        var actual = assertThrows(ApiRuntimeException.class, () -> sut.updateProduct(request));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.NOT_EXIST.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.NOT_EXIST.getMessage()));
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(request));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST.getMessage()));
     }
 
     @Test
     @DisplayName("존재하지 않는 브랜드를 사용한 상품 수정시 예외 발생")
     void throw_exception_when_modify_not_exist_brand() {
         // Arrange
-        var sut = new ProductService(productRepository, categoryRepository);
-        var request = new ProductUpdateRequest(1L, 1L, 1L, 5000, "5.55", "이정후");
+        var sut = new ProductService(brandRepository, productRepository, categoryRepository);
+        var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
+        sut.createProduct(new ProductCreateRequest(brand.getId(), 1L, 5000, "5.55", "이대호"));
+        var request = new ProductUpdateRequest(1L, 2L, 1L, 5000, "5.55", "이정후");
 
         // Assert & Act
-        var actual = assertThrows(ApiRuntimeException.class, () -> sut.updateProduct(request));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_MODIFY_WITH_NOT_EXIST_BRAND.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_MODIFY_WITH_NOT_EXIST_BRAND.getMessage()));
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(request));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_BRAND.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_BRAND.getMessage()));
     }
 
     @Test
     @DisplayName("존재하지 않는 카테고리를 사용한 상품 수정시 예외 발생")
     void throw_exception_when_modify_not_exist_category() {
         // Arrange
-        var sut = new ProductService(productRepository, categoryRepository);
-        var request = new ProductUpdateRequest(1L, 1L, 1L, 5000, "5.55", "이정후");
+        var sut = new ProductService(brandRepository, productRepository, categoryRepository);
+        var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
+        sut.createProduct(new ProductCreateRequest(brand.getId(), 1L, 5000, "5.55", "이대호"));
+        var request = new ProductUpdateRequest(1L, 1L, categoryRepository.count() + 1, 5000, "5.55", "이정후");
 
         // Assert & Act
-        var actual = assertThrows(ApiRuntimeException.class, () -> sut.updateProduct(request));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_MODIFY_WITH_NOT_EXIST_CATEGORY.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_MODIFY_WITH_NOT_EXIST_CATEGORY.getMessage()));
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(request));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_CATEGORY.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_CATEGORY.getMessage()));
     }
 }

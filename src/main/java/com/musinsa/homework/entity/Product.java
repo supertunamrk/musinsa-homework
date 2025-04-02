@@ -1,5 +1,7 @@
 package com.musinsa.homework.entity;
 
+import com.musinsa.homework.dto.ProductUpdateRequest;
+import com.musinsa.homework.util.ConvertUtil;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -80,9 +82,11 @@ public class Product {
         return modifiedDateTime;
     }
 
-    public void modify(Integer basePriceKRW, BigDecimal basePriceUSD, String modifiedBy) {
-        this.basePriceKRW = basePriceKRW;
-        this.basePriceUSD = basePriceUSD;
-        this.modifiedBy = modifiedBy;
+    public void modify(ProductUpdateRequest productUpdateRequest) {
+        this.brandId = productUpdateRequest.getBrandId();
+        this.categoryId = productUpdateRequest.getCategoryId();
+        this.basePriceKRW = productUpdateRequest.getBasePriceKRW();
+        this.basePriceUSD = ConvertUtil.toBigDecimal(productUpdateRequest.getBasePriceUSD());
+        this.modifiedBy = productUpdateRequest.getModifiedBy();
     }
 }
