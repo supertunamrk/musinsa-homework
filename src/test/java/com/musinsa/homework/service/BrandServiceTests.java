@@ -56,6 +56,36 @@ class BrandServiceTests {
     }
 
     @Test
+    @DisplayName("브랜드명이 겹치는 경우에 대한 예외 발생 - 케이스 동일")
+    void throw_exception_when_add_duplicated_name_with_same_case() {
+        // Arrange
+        var sut = new BrandService(brandRepository);
+        var request1 = new BrandCreateRequest("Adidas", "이대호");
+        var request2 = new BrandCreateRequest("Adidas", "이대호");
+
+        // Assert & Act
+        sut.createBrand(request1);
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.createBrand(request2));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.ALREADY_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.ALREADY_EXIST.getMessage()));
+    }
+
+    @Test
+    @DisplayName("브랜드명이 겹치는 경우에 대한 예외 발생 - 케이스 무시")
+    void throw_exception_when_add_duplicated_name_ignore_case() {
+        // Arrange
+        var sut = new BrandService(brandRepository);
+        var request1 = new BrandCreateRequest("Adidas", "이대호");
+        var request2 = new BrandCreateRequest("adidas", "이대호");
+
+        // Assert & Act
+        sut.createBrand(request1);
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.createBrand(request2));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.ALREADY_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.ALREADY_EXIST.getMessage()));
+    }
+
+    @Test
     @DisplayName("브랜드 수정")
     void update_brand() {
         // Arrange
