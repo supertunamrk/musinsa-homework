@@ -1,6 +1,7 @@
 package com.musinsa.homework.service;
 
 import com.musinsa.homework.dto.ProductCreateRequest;
+import com.musinsa.homework.dto.ProductUpdateRequest;
 import com.musinsa.homework.enums.ProductErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
 import com.musinsa.homework.repository.CategoryRepository;
@@ -61,5 +62,41 @@ public class ProductServiceTests {
         var actual = assertThrows(ApiRuntimeException.class, () -> sut.createProduct(request));
         assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_ADD_WITH_NOT_EXIST_CATEGORY.getCode()),
                 () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_ADD_WITH_NOT_EXIST_CATEGORY.getMessage()));
+    }
+
+    @Test
+    @DisplayName("상품 수정")
+    void update_product() {
+        // Arrange
+        var sut = new ProductService(productRepository, categoryRepository);
+        sut.createProduct(new ProductCreateRequest(1L, 10000, "10.11", "이대호"));
+        var product = productRepository.findAll().get(0);
+        var request = new ProductUpdateRequest(product.getId(), 5000, "5.55", "이정후");
+
+        // Act
+        sut.updateProduct(request);
+
+        // Assert
+        assertThat(productRepository.findAll()).hasSize(1);
+        var actual = productRepository.findAll().get(0);
+        assertAll(() -> assertThat(actual.getId()).isEqualTo(1L),
+                () -> assertThat(actual.getBasePriceKRW()).isEqualTo(request.getBasePriceKRW()),
+                () -> assertThat(actual.getBasePriceUSD()).isEqualTo(new BigDecimal(request.getBasePriceUSD())),
+                () -> assertThat(actual.getModifiedBy()).isEqualTo(request.getModifiedBy()),
+                () -> assertThat(actual.getRegisteredBy()).isNotEqualTo(actual.getModifiedBy()),
+                () -> assertThat(actual.getModifiedDateTime().isAfter(actual.getRegisteredDateTime())).isTrue());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 상품에 대한 수정시 예외 발생")
+    void throw_exception_when_modify_not_exist_product() {
+        // Arrange
+        var sut = new ProductService(productRepository, categoryRepository);
+        var request = new ProductUpdateRequest(1L, 5000, "5.55", "이정후");
+
+        // Assert & Act
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.updateProduct(request));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.NOT_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.NOT_EXIST.getMessage()));
     }
 }

@@ -1,6 +1,7 @@
 package com.musinsa.homework.service;
 
 import com.musinsa.homework.dto.ProductCreateRequest;
+import com.musinsa.homework.dto.ProductUpdateRequest;
 import com.musinsa.homework.entity.Product;
 import com.musinsa.homework.enums.ProductErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
@@ -29,6 +30,9 @@ public class ProductService {
                 productCreateRequest.getBasePriceKRW(), this.toBigDecimal(productCreateRequest.getBasePriceUSD()), productCreateRequest.getRegisteredBy());
 
         productRepository.save(product);
+    }
+
+    public void updateProduct(ProductUpdateRequest productUpdateRequest) {
     }
 
     private BigDecimal toBigDecimal(String target) {
