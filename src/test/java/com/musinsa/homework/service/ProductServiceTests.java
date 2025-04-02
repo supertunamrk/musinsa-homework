@@ -21,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
-public class ProductServiceTests {
+class ProductServiceTests {
     private final JdbcTemplate jdbcTemplate;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public ProductServiceTests(@Autowired JdbcTemplate jdbcTemplate, @Autowired ProductRepository productRepository, @Autowired CategoryRepository categoryRepository) {
+    ProductServiceTests(@Autowired JdbcTemplate jdbcTemplate, @Autowired ProductRepository productRepository, @Autowired CategoryRepository categoryRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
