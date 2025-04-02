@@ -1,6 +1,8 @@
 package com.musinsa.homework.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -14,13 +16,13 @@ public class Brand {
     private String name;
     @Column(name = "reg_by", nullable = false)
     private String registeredBy;
-    @Column(name = "reg_dt", nullable = false, updatable = false, insertable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "reg_dt", nullable = false, updatable = false)
     private LocalDateTime registeredDateTime;
     @Column(name = "mod_by", nullable = false)
     private String modifiedBy;
-    @Column(name = "mod_dt", nullable = false, updatable = false, insertable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @UpdateTimestamp
+    @Column(name = "mod_dt", nullable = false)
     private LocalDateTime modifiedDateTime;
 
     protected Brand() {
@@ -54,5 +56,10 @@ public class Brand {
 
     public LocalDateTime getModifiedDateTime() {
         return modifiedDateTime;
+    }
+
+    public void modify(String name, String modifiedBy) {
+        this.name = name;
+        this.modifiedBy = modifiedBy;
     }
 }
