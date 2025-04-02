@@ -1,6 +1,7 @@
 package com.musinsa.homework.service;
 
 import com.musinsa.homework.dto.ProductCreateRequest;
+import com.musinsa.homework.repository.CategoryRepository;
 import com.musinsa.homework.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DataJpaTest
 public class ProductServiceTests {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductServiceTests(@Autowired ProductRepository productRepository) {
+    public ProductServiceTests(@Autowired ProductRepository productRepository, @Autowired CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Test
@@ -26,7 +29,8 @@ public class ProductServiceTests {
     void add_product() {
         // Arrange
         var sut = new ProductService(productRepository);
-        var request = new ProductCreateRequest(1L, 10000, "10.11", "이대호");
+        var category = categoryRepository.findAll().get(0);
+        var request = new ProductCreateRequest(category.getId(), 10000, "10.11", "이대호");
 
         // Act
         sut.createProduct(request);

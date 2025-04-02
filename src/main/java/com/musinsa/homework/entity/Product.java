@@ -30,10 +30,12 @@ public class Product {
     protected Product() {
     }
 
-    public Product(Long categoryId, Integer basePriceKRW, BigDecimal basePriceUSD) {
+    public Product(Long categoryId, Integer basePriceKRW, BigDecimal basePriceUSD, String registeredBy) {
         this.categoryId = categoryId;
         this.basePriceKRW = basePriceKRW;
         this.basePriceUSD = basePriceUSD;
+        this.registeredBy = registeredBy;
+        this.modifiedBy = registeredBy;
     }
 
     public Long getId() {
