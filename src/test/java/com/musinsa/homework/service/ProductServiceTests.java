@@ -1,7 +1,7 @@
 package com.musinsa.homework.service;
 
 import com.musinsa.homework.dto.request.ProductCreateRequest;
-import com.musinsa.homework.dto.request.ProductUpdateRequest;
+import com.musinsa.homework.dto.request.ProductModifyRequest;
 import com.musinsa.homework.entity.Brand;
 import com.musinsa.homework.enums.ProductErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
@@ -48,7 +48,7 @@ class ProductServiceTests {
     void create_product() {
         // Arrange
         var sut = new ProductService(brandRepository, productRepository, categoryRepository);
-        var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
+        var brand = brandRepository.save(new Brand("아디다스", "Adidas", "이대호"));
         var category = categoryRepository.findAll().get(0);
         var request = new ProductCreateRequest(brand.getId(), category.getId(), 10000, "10.11", "이대호");
 
@@ -101,14 +101,14 @@ class ProductServiceTests {
     void modify_product() {
         // Arrange
         var sut = new ProductService(brandRepository, productRepository, categoryRepository);
-        var brand1 = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
-        var brand2 = brandRepository.save(new Brand("Nike", "이대호", "이대호"));
+        var brand1 = brandRepository.save(new Brand("아디다스", "Adidas", "이대호"));
+        var brand2 = brandRepository.save(new Brand("나이키", "Nike", "이대호"));
         sut.createProduct(new ProductCreateRequest(brand1.getId(), 1L, 10000, "10.11", "이대호"));
         var product = productRepository.findAll().get(0);
-        var request = new ProductUpdateRequest(product.getId(), brand2.getId(), 2L, 5000, "5.55", "이정후");
+        var request = new ProductModifyRequest(brand2.getId(), 2L, 5000, "5.55", "이정후");
 
         // Act
-        sut.modifyProduct(request);
+        sut.modifyProduct(product.getId(), request);
 
         // Assert
         assertThat(productRepository.findAll()).hasSize(1);
@@ -129,10 +129,10 @@ class ProductServiceTests {
         // Arrange
         var sut = new ProductService(brandRepository, productRepository, categoryRepository);
         var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
-        var request = new ProductUpdateRequest(1L, brand.getId(), 1L, 5000, "5.55", "이정후");
+        var request = new ProductModifyRequest(brand.getId(), 1L, 5000, "5.55", "이정후");
 
         // Assert & Act
-        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(request));
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(100L, request));
         assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST.getCode()),
                 () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST.getMessage()));
     }
@@ -144,10 +144,10 @@ class ProductServiceTests {
         var sut = new ProductService(brandRepository, productRepository, categoryRepository);
         var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
         sut.createProduct(new ProductCreateRequest(brand.getId(), 1L, 5000, "5.55", "이대호"));
-        var request = new ProductUpdateRequest(1L, 2L, 1L, 5000, "5.55", "이정후");
+        var request = new ProductModifyRequest(2L, 1L, 5000, "5.55", "이정후");
 
         // Assert & Act
-        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(request));
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(1L, request));
         assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_BRAND.getCode()),
                 () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_BRAND.getMessage()));
     }
@@ -159,17 +159,17 @@ class ProductServiceTests {
         var sut = new ProductService(brandRepository, productRepository, categoryRepository);
         var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
         sut.createProduct(new ProductCreateRequest(brand.getId(), 1L, 5000, "5.55", "이대호"));
-        var request = new ProductUpdateRequest(1L, 1L, categoryRepository.count() + 1, 5000, "5.55", "이정후");
+        var request = new ProductModifyRequest(1L, categoryRepository.count() + 1, 5000, "5.55", "이정후");
 
         // Assert & Act
-        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(request));
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(1L, request));
         assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_CATEGORY.getCode()),
                 () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_CATEGORY.getMessage()));
     }
 
     @Test
     @DisplayName("상품 삭제")
-    void delete_product() {
+    void remove_product() {
         // Arrange
         var sut = new ProductService(brandRepository, productRepository, categoryRepository);
         var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
@@ -186,7 +186,7 @@ class ProductServiceTests {
 
     @Test
     @DisplayName("존재하지 않는 상품 삭제시 예외 발생")
-    void throw_exception_when_delete_not_exist_product() {
+    void throw_exception_when_remove_not_exist_product() {
         // Arrange
         var sut = new ProductService(brandRepository, productRepository, categoryRepository);
 

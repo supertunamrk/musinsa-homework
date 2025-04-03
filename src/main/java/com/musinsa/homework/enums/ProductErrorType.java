@@ -6,7 +6,8 @@ public enum ProductErrorType implements ErrorType {
     CANNOT_MODIFY_NOT_EXIST("P0003", "존재하지 않는 상품의 수정은 불가능 합니다."),
     CANNOT_MODIFY_NOT_EXIST_BRAND("P0004", "존재하지 않는 브랜드로 상품 수정은 불가능 합니다."),
     CANNOT_MODIFY_NOT_EXIST_CATEGORY("P0005", "존재하지 않는 카테고리로 상품 수정은 불가능 합니다."),
-    CANNOT_REMOVE_NOT_EXIST("P0006", "존재하지 않는 상품의 삭제는 불가능 합니다.");
+    CANNOT_REMOVE_NOT_EXIST("P0006", "존재하지 않는 상품의 삭제는 불가능 합니다."),
+    NOT_FOUND("B0007", "존재하지 않는 상품 입니다.");
 
     private final String code;
     private final String message;

@@ -1,6 +1,6 @@
 package com.musinsa.homework.entity;
 
-import com.musinsa.homework.dto.request.ProductUpdateRequest;
+import com.musinsa.homework.dto.request.ProductModifyRequest;
 import com.musinsa.homework.util.ConvertUtil;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -84,7 +84,7 @@ public class Product {
         return modifiedDateTime;
     }
 
-    public void modify(ProductUpdateRequest productUpdateRequest) {
+    public void modify(ProductModifyRequest productUpdateRequest) {
         this.brandId = productUpdateRequest.getBrandId();
         this.categoryId = productUpdateRequest.getCategoryId();
         this.basePriceKRW = productUpdateRequest.getBasePriceKRW();
