@@ -1,7 +1,7 @@
 package com.musinsa.homework.service;
 
 import com.musinsa.homework.dto.BrandCreateRequest;
-import com.musinsa.homework.dto.BrandUpdateRequest;
+import com.musinsa.homework.dto.BrandModifyRequest;
 import com.musinsa.homework.enums.BrandErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
 import com.musinsa.homework.repository.BrandRepository;
@@ -35,10 +35,10 @@ class BrandServiceTests {
 
     @Test
     @DisplayName("브랜드 추가")
-    void add_brand() {
+    void create_brand() {
         // Arrange
         var sut = new BrandService(brandRepository);
-        var request = new BrandCreateRequest("Adidas", "이대호");
+        var request = new BrandCreateRequest("아디다스", "Adidas", "이대호");
 
         // Act
         sut.createBrand(request);
@@ -47,7 +47,8 @@ class BrandServiceTests {
         assertThat(brandRepository.count()).isEqualTo(1);
         var actual = brandRepository.findAll().get(0);
         assertAll(() -> assertThat(actual.getId()).isEqualTo(1L),
-                () -> assertThat(actual.getName()).isEqualToIgnoringCase(request.getName()),
+                () -> assertThat(actual.getTitleKr()).isEqualToIgnoringCase(request.getTitleKr()),
+                () -> assertThat(actual.getTitleEn()).isEqualToIgnoringCase(request.getTitleEn()),
                 () -> assertThat(actual.getRegisteredBy()).isEqualTo(request.getRegisteredBy()),
                 () -> assertThat(actual.getRegisteredBy()).isEqualTo(actual.getModifiedBy()),
                 () -> assertThat(actual.getRegisteredDateTime()).isNotNull(),
@@ -57,54 +58,71 @@ class BrandServiceTests {
 
     @Test
     @DisplayName("브랜드명이 겹치는 경우에 대한 예외 발생 - 케이스 동일")
-    void throw_exception_when_add_duplicated_name_with_same_case() {
+    void throw_exception_when_create_duplicated_name_with_same_case() {
         // Arrange
         var sut = new BrandService(brandRepository);
-        var request1 = new BrandCreateRequest("Adidas", "이대호");
-        var request2 = new BrandCreateRequest("Adidas", "이대호");
+        var request1 = new BrandCreateRequest("아디다스", "Adidas", "이대호");
+        var request2 = new BrandCreateRequest("코오롱", "Adidas", "이대호");
 
-        // Assert & Act
+        // Act & Assert
         sut.createBrand(request1);
         var actual = assertThrows(ApiRuntimeException.class, () -> sut.createBrand(request2));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST.getMessage()));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_CREATE_DUPLICATED_TITLE.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_CREATE_DUPLICATED_TITLE.getMessage()));
     }
 
     @Test
     @DisplayName("브랜드명이 겹치는 경우에 대한 예외 발생 - 케이스 무시")
-    void throw_exception_when_add_duplicated_name_ignore_case() {
+    void throw_exception_when_create_duplicated_name_ignore_case() {
         // Arrange
         var sut = new BrandService(brandRepository);
-        var request1 = new BrandCreateRequest("Adidas", "이대호");
-        var request2 = new BrandCreateRequest("adidas", "이대호");
+        var request1 = new BrandCreateRequest("아디다스", "Adidas", "이대호");
+        var request2 = new BrandCreateRequest("코오롱", "adidas", "이대호");
 
-        // Assert & Act
+        // Act & Assert
         sut.createBrand(request1);
         var actual = assertThrows(ApiRuntimeException.class, () -> sut.createBrand(request2));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST.getMessage()));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_CREATE_DUPLICATED_TITLE.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_CREATE_DUPLICATED_TITLE.getMessage()));
     }
 
     @Test
     @DisplayName("브랜드 수정")
-    void update_brand() {
+    void modify_brand() {
         // Arrange
         var sut = new BrandService(brandRepository);
-        sut.createBrand(new BrandCreateRequest("Adidas", "이대호"));
+        sut.createBrand(new BrandCreateRequest("아디다스", "Adidas", "이대호"));
         var brand = brandRepository.findAll().get(0);
-        var request = new BrandUpdateRequest(brand.getId(), "Nike", "이정후");
+        var request = new BrandModifyRequest("나이키", "Nike", "이정후");
 
         // Act
-        sut.modifyBrand(request);
+        sut.modifyBrand(brand.getId(), request);
 
         // Assert
         assertThat(brandRepository.findAll()).hasSize(1);
         var actual = brandRepository.findAll().get(0);
         assertAll(() -> assertThat(actual.getId()).isEqualTo(1L),
-                () -> assertThat(actual.getName()).isEqualTo(request.getName()),
+                () -> assertThat(actual.getTitleKr()).isEqualTo(request.getTitleKr()),
+                () -> assertThat(actual.getTitleEn()).isEqualTo(request.getTitleEn()),
                 () -> assertThat(actual.getModifiedBy()).isEqualTo(request.getModifiedBy()),
                 () -> assertThat(actual.getRegisteredBy()).isNotEqualTo(actual.getModifiedBy()),
                 () -> assertThat(actual.getModifiedDateTime().isAfter(actual.getRegisteredDateTime())).isTrue());
+    }
+
+    @Test
+    @DisplayName("브랜드명이 겹치는 수정이 발생하면 예외 발생")
+    void throw_exception_when_modify_duplicated_name() {
+        // Arrange
+        var sut = new BrandService(brandRepository);
+        sut.createBrand(new BrandCreateRequest("아디다스", "Adidas", "이대호"));
+        sut.createBrand(new BrandCreateRequest("나이키", "Nike", "이대호"));
+        var brand = brandRepository.findAll().get(0);
+        var request = new BrandModifyRequest("아디다스", "Nike", "이정후");
+
+        // Act & Assert
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyBrand(brand.getId(), request));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_MODIFY_DUPLICATED_TITLE.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_MODIFY_DUPLICATED_TITLE.getMessage()));
     }
 
     @Test
@@ -112,10 +130,10 @@ class BrandServiceTests {
     void throw_exception_when_modify_not_exist_brand() {
         // Arrange
         var sut = new BrandService(brandRepository);
-        var request = new BrandUpdateRequest(1L, "Nike", "이정후");
+        var request = new BrandModifyRequest("나이키", "Nike", "이정후");
 
-        // Assert & Act
-        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyBrand(request));
+        // Act & Assert
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyBrand(1L, request));
         assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_MODIFY_NOT_EXIST.getCode()),
                 () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_MODIFY_NOT_EXIST.getMessage()));
     }
@@ -125,7 +143,7 @@ class BrandServiceTests {
     void remove_brand() {
         // Arrange
         var sut = new BrandService(brandRepository);
-        sut.createBrand(new BrandCreateRequest("Adidas", "이대호"));
+        sut.createBrand(new BrandCreateRequest("아디다스", "Adidas", "이대호"));
         var brand = brandRepository.findAll().get(0);
 
         // Act
@@ -142,7 +160,7 @@ class BrandServiceTests {
         // Arrange
         var sut = new BrandService(brandRepository);
 
-        // Assert & Act
+        // Act & Assert
         var actual = assertThrows(ApiRuntimeException.class, () -> sut.removeBrand(100L));
         assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_REMOVE_NOT_EXIST.getCode()),
                 () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_REMOVE_NOT_EXIST.getMessage()));

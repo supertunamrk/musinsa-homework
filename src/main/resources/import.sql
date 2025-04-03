@@ -9,15 +9,15 @@ INSERT INTO category (title_kr, title_en, open_yn) VALUES ('양말', 'SOCKS', 'Y
 INSERT INTO category (title_kr, title_en, open_yn) VALUES ('액세서리', 'ACCESSORIES', 'Y');
 
 --init brands
-INSERT INTO brand (name, reg_by, reg_dt, mod_by, mod_dt) VALUES ('A', '강동원', NOW(), '강동원', NOW());
-INSERT INTO brand (name, reg_by, reg_dt, mod_by, mod_dt) VALUES ('B', '강동원', NOW(), '강동원', NOW());
-INSERT INTO brand (name, reg_by, reg_dt, mod_by, mod_dt) VALUES ('C', '강동원', NOW(), '강동원', NOW());
-INSERT INTO brand (name, reg_by, reg_dt, mod_by, mod_dt) VALUES ('D', '강동원', NOW(), '강동원', NOW());
-INSERT INTO brand (name, reg_by, reg_dt, mod_by, mod_dt) VALUES ('E', '강동원', NOW(), '강동원', NOW());
-INSERT INTO brand (name, reg_by, reg_dt, mod_by, mod_dt) VALUES ('F', '강동원', NOW(), '강동원', NOW());
-INSERT INTO brand (name, reg_by, reg_dt, mod_by, mod_dt) VALUES ('G', '강동원', NOW(), '강동원', NOW());
-INSERT INTO brand (name, reg_by, reg_dt, mod_by, mod_dt) VALUES ('H', '강동원', NOW(), '강동원', NOW());
-INSERT INTO brand (name, reg_by, reg_dt, mod_by, mod_dt) VALUES ('I', '강동원', NOW(), '강동원', NOW());
+INSERT INTO brand (title_kr, title_en, reg_by, reg_dt, mod_by, mod_dt) VALUES ('가', 'A', '강동원', NOW(), '강동원', NOW());
+INSERT INTO brand (title_kr, title_en, reg_by, reg_dt, mod_by, mod_dt) VALUES ('나', 'B', '강동원', NOW(), '강동원', NOW());
+INSERT INTO brand (title_kr, title_en, reg_by, reg_dt, mod_by, mod_dt) VALUES ('다', 'C', '강동원', NOW(), '강동원', NOW());
+INSERT INTO brand (title_kr, title_en, reg_by, reg_dt, mod_by, mod_dt) VALUES ('라', 'D', '강동원', NOW(), '강동원', NOW());
+INSERT INTO brand (title_kr, title_en, reg_by, reg_dt, mod_by, mod_dt) VALUES ('마', 'E', '강동원', NOW(), '강동원', NOW());
+INSERT INTO brand (title_kr, title_en, reg_by, reg_dt, mod_by, mod_dt) VALUES ('바', 'F', '강동원', NOW(), '강동원', NOW());
+INSERT INTO brand (title_kr, title_en, reg_by, reg_dt, mod_by, mod_dt) VALUES ('사', 'G', '강동원', NOW(), '강동원', NOW());
+INSERT INTO brand (title_kr, title_en, reg_by, reg_dt, mod_by, mod_dt) VALUES ('아', 'H', '강동원', NOW(), '강동원', NOW());
+INSERT INTO brand (title_kr, title_en, reg_by, reg_dt, mod_by, mod_dt) VALUES ('자', 'I', '강동원', NOW(), '강동원', NOW());
 
 --init products
 INSERT INTO product (brand_id, category_id, base_price_krw, base_price_usd, reg_by, reg_dt, mod_by, mod_dt) VALUES (1, 1, 11200, 11.20, '강동원', NOW(), '강동원', NOW());

@@ -13,33 +13,40 @@ public class Brand {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, unique = true)
-    private String name;
+    private String titleKr;
+    @Column(nullable = false, unique = true)
+    private String titleEn;
     @Column(name = "reg_by", nullable = false)
     private String registeredBy;
     @CreationTimestamp
-    @Column(name = "reg_dt", nullable = false, updatable = false)
+    @Column(name = "reg_dt", nullable = false, updatable = false, columnDefinition = "TIMESTAMP(0)")
     private LocalDateTime registeredDateTime;
     @Column(name = "mod_by", nullable = false)
     private String modifiedBy;
     @UpdateTimestamp
-    @Column(name = "mod_dt", nullable = false)
+    @Column(name = "mod_dt", nullable = false, columnDefinition = "TIMESTAMP(0)")
     private LocalDateTime modifiedDateTime;
 
     protected Brand() {
     }
 
-    public Brand(String name, String registeredBy, String modifiedBy) {
-        this.name = name.toLowerCase();
+    public Brand(String titleKr, String titleEn, String registeredBy) {
+        this.titleKr = titleKr;
+        this.titleEn = titleEn;
         this.registeredBy = registeredBy;
-        this.modifiedBy = modifiedBy;
+        this.modifiedBy = registeredBy;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitleKr() {
+        return titleKr;
+    }
+
+    public String getTitleEn() {
+        return titleEn;
     }
 
     public String getRegisteredBy() {
@@ -58,8 +65,9 @@ public class Brand {
         return modifiedDateTime;
     }
 
-    public void modify(String name, String modifiedBy) {
-        this.name = name;
+    public void modify(String titleKr, String titleEn, String modifiedBy) {
+        this.titleKr = titleKr;
+        this.titleEn = titleEn;
         this.modifiedBy = modifiedBy;
     }
 }

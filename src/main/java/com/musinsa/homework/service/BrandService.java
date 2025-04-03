@@ -1,7 +1,7 @@
 package com.musinsa.homework.service;
 
 import com.musinsa.homework.dto.BrandCreateRequest;
-import com.musinsa.homework.dto.BrandUpdateRequest;
+import com.musinsa.homework.dto.BrandModifyRequest;
 import com.musinsa.homework.entity.Brand;
 import com.musinsa.homework.enums.BrandErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
@@ -20,20 +20,30 @@ public class BrandService {
 
     @Transactional
     public void createBrand(BrandCreateRequest brandCreateRequest) {
+        if (brandRepository.countByTitleEnCaseInsensitive(brandCreateRequest.getTitleEn()) != 0) {
+            throw new ApiRuntimeException(BrandErrorType.CANNOT_CREATE_DUPLICATED_TITLE);
+        }
+
         try {
-            var brand = new Brand(brandCreateRequest.getName(), brandCreateRequest.getRegisteredBy(), brandCreateRequest.getRegisteredBy());
+            var brand = new Brand(brandCreateRequest.getTitleKr(), brandCreateRequest.getTitleEn(), brandCreateRequest.getRegisteredBy());
 
             brandRepository.save(brand);
         } catch (DataIntegrityViolationException e) {
-            throw new ApiRuntimeException(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST);
+            throw new ApiRuntimeException(BrandErrorType.CANNOT_CREATE_DUPLICATED_TITLE);
         }
     }
 
     @Transactional
-    public void modifyBrand(BrandUpdateRequest brandUpdateRequest) {
-        var brand = brandRepository.findById(brandUpdateRequest.getId()).orElseThrow(() -> new ApiRuntimeException(BrandErrorType.CANNOT_MODIFY_NOT_EXIST));
+    public void modifyBrand(Long brandId, BrandModifyRequest brandModifyRequest) {
+        try {
+            var brand = brandRepository.findById(brandId).orElseThrow(() -> new ApiRuntimeException(BrandErrorType.CANNOT_MODIFY_NOT_EXIST));
 
-        brand.modify(brandUpdateRequest.getName(), brandUpdateRequest.getModifiedBy());
+            brand.modify(brandModifyRequest.getTitleKr(), brandModifyRequest.getTitleEn(), brandModifyRequest.getModifiedBy());
+
+            brandRepository.saveAndFlush(brand);
+        } catch (DataIntegrityViolationException e) {
+            throw new ApiRuntimeException(BrandErrorType.CANNOT_MODIFY_DUPLICATED_TITLE);
+        }
     }
 
     @Transactional

@@ -1,14 +1,14 @@
 package com.musinsa.homework.dto;
 
-public class BrandCreateRequest {
+public class BrandModifyRequest {
     private String titleKr;
     private String titleEn;
-    private String registeredBy;
+    private String modifiedBy;
 
-    public BrandCreateRequest(String titleKr, String titleEn, String registeredBy) {
+    public BrandModifyRequest(String titleKr, String titleEn, String modifiedBy) {
         this.titleKr = titleKr;
         this.titleEn = titleEn;
-        this.registeredBy = registeredBy;
+        this.modifiedBy = modifiedBy;
     }
 
     public String getTitleKr() {
@@ -19,7 +19,7 @@ public class BrandCreateRequest {
         return titleEn;
     }
 
-    public String getRegisteredBy() {
-        return registeredBy;
+    public String getModifiedBy() {
+        return modifiedBy;
     }
 }
