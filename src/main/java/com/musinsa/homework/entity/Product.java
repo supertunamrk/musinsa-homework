@@ -3,15 +3,11 @@ package com.musinsa.homework.entity;
 import com.musinsa.homework.dto.request.ProductModifyRequest;
 import com.musinsa.homework.util.ConvertUtil;
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
-public class Product {
-
+public class Product extends BaseBackOfficeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,27 +17,17 @@ public class Product {
     private Integer basePriceKRW;
     @Column(name = "base_price_usd", precision = 10, scale = 2)
     private BigDecimal basePriceUSD;
-    @Column(name = "reg_by", nullable = false)
-    private String registeredBy;
-    @CreationTimestamp
-    @Column(name = "reg_dt", nullable = false, updatable = false, columnDefinition = "TIMESTAMP(0)")
-    private LocalDateTime registeredDateTime;
-    @Column(name = "mod_by", nullable = false)
-    private String modifiedBy;
-    @UpdateTimestamp
-    @Column(name = "mod_dt", nullable = false, columnDefinition = "TIMESTAMP(0)")
-    private LocalDateTime modifiedDateTime;
 
     protected Product() {
     }
 
     public Product(Long brandId, Long categoryId, Integer basePriceKRW, BigDecimal basePriceUSD, String registeredBy) {
+        super(registeredBy, registeredBy);
+
         this.brandId = brandId;
         this.categoryId = categoryId;
         this.basePriceKRW = basePriceKRW;
         this.basePriceUSD = basePriceUSD;
-        this.registeredBy = registeredBy;
-        this.modifiedBy = registeredBy;
     }
 
     public Long getId() {
@@ -50,10 +36,6 @@ public class Product {
 
     public Long getBrandId() {
         return brandId;
-    }
-
-    public void setBrandId(Long brandId) {
-        this.brandId = brandId;
     }
 
     public Long getCategoryId() {
@@ -68,27 +50,12 @@ public class Product {
         return basePriceUSD;
     }
 
-    public String getRegisteredBy() {
-        return registeredBy;
-    }
-
-    public LocalDateTime getRegisteredDateTime() {
-        return registeredDateTime;
-    }
-
-    public String getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public LocalDateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
     public void modify(ProductModifyRequest productUpdateRequest) {
         this.brandId = productUpdateRequest.brandId();
         this.categoryId = productUpdateRequest.categoryId();
         this.basePriceKRW = productUpdateRequest.basePriceKRW();
         this.basePriceUSD = ConvertUtil.toBigDecimal(productUpdateRequest.basePriceUSD());
-        this.modifiedBy = productUpdateRequest.modifiedBy();
+
+        modify(productUpdateRequest.modifiedBy());
     }
 }
