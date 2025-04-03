@@ -1,6 +1,6 @@
 package com.musinsa.homework.entity;
 
-import com.musinsa.homework.dto.ProductUpdateRequest;
+import com.musinsa.homework.dto.request.ProductUpdateRequest;
 import com.musinsa.homework.util.ConvertUtil;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,17 +17,19 @@ public class Product {
     private Long id;
     private Long brandId;
     private Long categoryId;
+    @Column(name = "base_price_krw")
     private Integer basePriceKRW;
+    @Column(name = "base_price_usd", precision = 10, scale = 2)
     private BigDecimal basePriceUSD;
     @Column(name = "reg_by", nullable = false)
     private String registeredBy;
     @CreationTimestamp
-    @Column(name = "reg_dt", nullable = false, updatable = false)
+    @Column(name = "reg_dt", nullable = false, updatable = false, columnDefinition = "TIMESTAMP(0)")
     private LocalDateTime registeredDateTime;
     @Column(name = "mod_by", nullable = false)
     private String modifiedBy;
     @UpdateTimestamp
-    @Column(name = "mod_dt", nullable = false)
+    @Column(name = "mod_dt", nullable = false, columnDefinition = "TIMESTAMP(0)")
     private LocalDateTime modifiedDateTime;
 
     protected Product() {
