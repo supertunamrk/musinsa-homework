@@ -25,14 +25,21 @@ public class BrandService {
 
             brandRepository.save(brand);
         } catch (DataIntegrityViolationException e) {
-            throw new ApiRuntimeException(BrandErrorType.ALREADY_EXIST);
+            throw new ApiRuntimeException(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST);
         }
     }
 
     @Transactional
-    public void updateBrand(BrandUpdateRequest brandUpdateRequest) {
-        var brand = brandRepository.findById(brandUpdateRequest.getId()).orElseThrow(() -> new ApiRuntimeException(BrandErrorType.NOT_EXIST));
+    public void modifyBrand(BrandUpdateRequest brandUpdateRequest) {
+        var brand = brandRepository.findById(brandUpdateRequest.getId()).orElseThrow(() -> new ApiRuntimeException(BrandErrorType.CANNOT_MODIFY_NOT_EXIST));
 
         brand.modify(brandUpdateRequest.getName(), brandUpdateRequest.getModifiedBy());
+    }
+
+    @Transactional
+    public void removeBrand(Long brandId) {
+        var brand = brandRepository.findById(brandId).orElseThrow(() -> new ApiRuntimeException(BrandErrorType.CANNOT_REMOVE_NOT_EXIST));
+
+        brandRepository.delete(brand);
     }
 }

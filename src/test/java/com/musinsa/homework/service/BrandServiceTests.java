@@ -66,8 +66,8 @@ class BrandServiceTests {
         // Assert & Act
         sut.createBrand(request1);
         var actual = assertThrows(ApiRuntimeException.class, () -> sut.createBrand(request2));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.ALREADY_EXIST.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.ALREADY_EXIST.getMessage()));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST.getMessage()));
     }
 
     @Test
@@ -81,8 +81,8 @@ class BrandServiceTests {
         // Assert & Act
         sut.createBrand(request1);
         var actual = assertThrows(ApiRuntimeException.class, () -> sut.createBrand(request2));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.ALREADY_EXIST.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.ALREADY_EXIST.getMessage()));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_CREATE_ALREADY_EXIST.getMessage()));
     }
 
     @Test
@@ -95,7 +95,7 @@ class BrandServiceTests {
         var request = new BrandUpdateRequest(brand.getId(), "Nike", "이정후");
 
         // Act
-        sut.updateBrand(request);
+        sut.modifyBrand(request);
 
         // Assert
         assertThat(brandRepository.findAll()).hasSize(1);
@@ -115,8 +115,36 @@ class BrandServiceTests {
         var request = new BrandUpdateRequest(1L, "Nike", "이정후");
 
         // Assert & Act
-        var actual = assertThrows(ApiRuntimeException.class, () -> sut.updateBrand(request));
-        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.NOT_EXIST.getCode()),
-                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.NOT_EXIST.getMessage()));
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyBrand(request));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_MODIFY_NOT_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_MODIFY_NOT_EXIST.getMessage()));
+    }
+
+    @Test
+    @DisplayName("브랜드 삭제")
+    void remove_brand() {
+        // Arrange
+        var sut = new BrandService(brandRepository);
+        sut.createBrand(new BrandCreateRequest("Adidas", "이대호"));
+        var brand = brandRepository.findAll().get(0);
+
+        // Act
+        sut.removeBrand(brand.getId());
+
+        // Assert
+        assertAll(() -> assertThat(brandRepository.findAll()).hasSize(0),
+                () -> assertThat(brandRepository.findById(brand.getId()).isPresent()).isFalse());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 상품 삭제시 예외 발생")
+    void throw_exception_when_remove_not_exist_brand() {
+        // Arrange
+        var sut = new BrandService(brandRepository);
+
+        // Assert & Act
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.removeBrand(100L));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(BrandErrorType.CANNOT_REMOVE_NOT_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(BrandErrorType.CANNOT_REMOVE_NOT_EXIST.getMessage()));
     }
 }
