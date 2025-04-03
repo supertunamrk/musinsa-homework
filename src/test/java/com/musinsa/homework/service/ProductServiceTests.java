@@ -1,7 +1,7 @@
 package com.musinsa.homework.service;
 
-import com.musinsa.homework.dto.ProductCreateRequest;
-import com.musinsa.homework.dto.ProductUpdateRequest;
+import com.musinsa.homework.dto.request.ProductCreateRequest;
+import com.musinsa.homework.dto.request.ProductUpdateRequest;
 import com.musinsa.homework.entity.Brand;
 import com.musinsa.homework.enums.ProductErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
@@ -165,5 +165,34 @@ class ProductServiceTests {
         var actual = assertThrows(ApiRuntimeException.class, () -> sut.modifyProduct(request));
         assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_CATEGORY.getCode()),
                 () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_CATEGORY.getMessage()));
+    }
+
+    @Test
+    @DisplayName("상품 삭제")
+    void delete_product() {
+        // Arrange
+        var sut = new ProductService(brandRepository, productRepository, categoryRepository);
+        var brand = brandRepository.save(new Brand("Adidas", "이대호", "이대호"));
+        sut.createProduct(new ProductCreateRequest(brand.getId(), 1L, 10000, "10.11", "이대호"));
+        var product = productRepository.findAll().get(0);
+
+        // Act
+        sut.removeProduct(product.getId());
+
+        // Assert
+        assertAll(() -> assertThat(productRepository.findAll()).hasSize(0),
+                () -> assertThat(productRepository.findById(product.getId()).isPresent()).isFalse());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 상품 삭제시 예외 발생")
+    void throw_exception_when_delete_not_exist_product() {
+        // Arrange
+        var sut = new ProductService(brandRepository, productRepository, categoryRepository);
+
+        // Assert & Act
+        var actual = assertThrows(ApiRuntimeException.class, () -> sut.removeProduct(100L));
+        assertAll(() -> assertThat(actual.getErrorCode()).isEqualTo(ProductErrorType.CANNOT_REMOVE_NOT_EXIST.getCode()),
+                () -> assertThat(actual.getErrorMessage()).isEqualTo(ProductErrorType.CANNOT_REMOVE_NOT_EXIST.getMessage()));
     }
 }

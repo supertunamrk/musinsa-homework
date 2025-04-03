@@ -1,7 +1,7 @@
 package com.musinsa.homework.service;
 
-import com.musinsa.homework.dto.ProductCreateRequest;
-import com.musinsa.homework.dto.ProductUpdateRequest;
+import com.musinsa.homework.dto.request.ProductCreateRequest;
+import com.musinsa.homework.dto.request.ProductUpdateRequest;
 import com.musinsa.homework.entity.Product;
 import com.musinsa.homework.enums.ProductErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
@@ -42,5 +42,12 @@ public class ProductService {
         var product = productRepository.findById(productUpdateRequest.getId()).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.CANNOT_MODIFY_NOT_EXIST));
 
         product.modify(productUpdateRequest);
+    }
+
+    @Transactional
+    public void removeProduct(Long productId) {
+        var product = productRepository.findById(productId).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.CANNOT_REMOVE_NOT_EXIST));
+
+        productRepository.delete(product);
     }
 }

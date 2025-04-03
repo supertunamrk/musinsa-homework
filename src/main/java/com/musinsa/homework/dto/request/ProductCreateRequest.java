@@ -1,4 +1,4 @@
-package com.musinsa.homework.dto;
+package com.musinsa.homework.dto.request;
 
 public class ProductCreateRequest {
     private Long brandId;

@@ -1,4 +1,4 @@
-package com.musinsa.homework.dto;
+package com.musinsa.homework.dto.request;
 
 public class ProductUpdateRequest {
     private Long id;
