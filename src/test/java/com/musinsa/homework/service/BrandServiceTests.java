@@ -1,7 +1,7 @@
 package com.musinsa.homework.service;
 
-import com.musinsa.homework.dto.BrandCreateRequest;
-import com.musinsa.homework.dto.BrandModifyRequest;
+import com.musinsa.homework.dto.request.BrandCreateRequest;
+import com.musinsa.homework.dto.request.BrandModifyRequest;
 import com.musinsa.homework.enums.BrandErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
 import com.musinsa.homework.repository.BrandRepository;

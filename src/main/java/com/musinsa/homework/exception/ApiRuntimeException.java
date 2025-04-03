@@ -7,6 +7,8 @@ public class ApiRuntimeException extends RuntimeException {
     private final String errorMessage;
 
     public ApiRuntimeException(ErrorType errorType) {
+        super(errorType.getMessage());
+
         this.errorCode = errorType.getCode();
         this.errorMessage = errorType.getMessage();
     }

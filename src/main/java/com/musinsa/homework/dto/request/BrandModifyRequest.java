@@ -1,4 +1,4 @@
-package com.musinsa.homework.dto;
+package com.musinsa.homework.dto.request;
 
 public class BrandModifyRequest {
     private String titleKr;

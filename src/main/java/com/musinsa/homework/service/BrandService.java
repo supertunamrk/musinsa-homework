@@ -1,7 +1,8 @@
 package com.musinsa.homework.service;
 
-import com.musinsa.homework.dto.BrandCreateRequest;
-import com.musinsa.homework.dto.BrandModifyRequest;
+import com.musinsa.homework.dto.request.BrandCreateRequest;
+import com.musinsa.homework.dto.request.BrandModifyRequest;
+import com.musinsa.homework.dto.response.BrandResponse;
 import com.musinsa.homework.entity.Brand;
 import com.musinsa.homework.enums.BrandErrorType;
 import com.musinsa.homework.exception.ApiRuntimeException;
@@ -10,12 +11,25 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class BrandService {
     private final BrandRepository brandRepository;
 
     public BrandService(BrandRepository brandRepository) {
         this.brandRepository = brandRepository;
+    }
+
+    public List<BrandResponse> getAllBrand() {
+        return brandRepository.findAll().stream().map(BrandResponse::new).collect(Collectors.toList());
+    }
+
+    public BrandResponse getBrand(Long brandId) {
+        var brand = brandRepository.findById(brandId).orElseThrow(() -> new ApiRuntimeException(BrandErrorType.NOT_FOUND));
+
+        return new BrandResponse(brand);
     }
 
     @Transactional
