@@ -47,9 +47,9 @@ class BrandServiceTests {
         assertThat(brandRepository.count()).isEqualTo(1);
         var actual = brandRepository.findAll().get(0);
         assertAll(() -> assertThat(actual.getId()).isEqualTo(1L),
-                () -> assertThat(actual.getTitleKr()).isEqualToIgnoringCase(request.getTitleKr()),
-                () -> assertThat(actual.getTitleEn()).isEqualToIgnoringCase(request.getTitleEn()),
-                () -> assertThat(actual.getRegisteredBy()).isEqualTo(request.getRegisteredBy()),
+                () -> assertThat(actual.getTitleKr()).isEqualToIgnoringCase(request.titleKr()),
+                () -> assertThat(actual.getTitleEn()).isEqualToIgnoringCase(request.titleEn()),
+                () -> assertThat(actual.getRegisteredBy()).isEqualTo(request.registeredBy()),
                 () -> assertThat(actual.getRegisteredBy()).isEqualTo(actual.getModifiedBy()),
                 () -> assertThat(actual.getRegisteredDateTime()).isNotNull(),
                 () -> assertThat(actual.getModifiedDateTime()).isNotNull(),
@@ -102,9 +102,9 @@ class BrandServiceTests {
         assertThat(brandRepository.findAll()).hasSize(1);
         var actual = brandRepository.findAll().get(0);
         assertAll(() -> assertThat(actual.getId()).isEqualTo(1L),
-                () -> assertThat(actual.getTitleKr()).isEqualTo(request.getTitleKr()),
-                () -> assertThat(actual.getTitleEn()).isEqualTo(request.getTitleEn()),
-                () -> assertThat(actual.getModifiedBy()).isEqualTo(request.getModifiedBy()),
+                () -> assertThat(actual.getTitleKr()).isEqualTo(request.titleKr()),
+                () -> assertThat(actual.getTitleEn()).isEqualTo(request.titleEn()),
+                () -> assertThat(actual.getModifiedBy()).isEqualTo(request.modifiedBy()),
                 () -> assertThat(actual.getRegisteredBy()).isNotEqualTo(actual.getModifiedBy()),
                 () -> assertThat(actual.getModifiedDateTime().isAfter(actual.getRegisteredDateTime())).isTrue());
     }

@@ -40,19 +40,19 @@ public class ProductService {
 
     @Transactional
     public void createProduct(ProductCreateRequest productCreateRequest) {
-        brandRepository.findById(productCreateRequest.getBrandId()).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.CANNOT_CREATE_NOT_EXIST_BRAND));
-        categoryRepository.findById(productCreateRequest.getCategoryId()).orElseThrow((() -> new ApiRuntimeException(ProductErrorType.CANNOT_CREATE_NOT_EXIST_CATEGORY)));
+        brandRepository.findById(productCreateRequest.brandId()).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.CANNOT_CREATE_NOT_EXIST_BRAND));
+        categoryRepository.findById(productCreateRequest.categoryId()).orElseThrow((() -> new ApiRuntimeException(ProductErrorType.CANNOT_CREATE_NOT_EXIST_CATEGORY)));
 
-        var product = new Product(productCreateRequest.getBrandId(), productCreateRequest.getCategoryId(),
-                productCreateRequest.getBasePriceKRW(), ConvertUtil.toBigDecimal(productCreateRequest.getBasePriceUSD()), productCreateRequest.getRegisteredBy());
+        var product = new Product(productCreateRequest.brandId(), productCreateRequest.categoryId(),
+                productCreateRequest.basePriceKRW(), ConvertUtil.toBigDecimal(productCreateRequest.basePriceUSD()), productCreateRequest.registeredBy());
 
         productRepository.save(product);
     }
 
     @Transactional
     public void modifyProduct(Long productId, ProductModifyRequest productModifyRequest) {
-        brandRepository.findById(productModifyRequest.getBrandId()).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_BRAND));
-        categoryRepository.findById(productModifyRequest.getCategoryId()).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_CATEGORY));
+        brandRepository.findById(productModifyRequest.brandId()).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_BRAND));
+        categoryRepository.findById(productModifyRequest.categoryId()).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.CANNOT_MODIFY_NOT_EXIST_CATEGORY));
         var product = productRepository.findById(productId).orElseThrow(() -> new ApiRuntimeException(ProductErrorType.CANNOT_MODIFY_NOT_EXIST));
 
         product.modify(productModifyRequest);

@@ -85,10 +85,10 @@ public class Product {
     }
 
     public void modify(ProductModifyRequest productUpdateRequest) {
-        this.brandId = productUpdateRequest.getBrandId();
-        this.categoryId = productUpdateRequest.getCategoryId();
-        this.basePriceKRW = productUpdateRequest.getBasePriceKRW();
-        this.basePriceUSD = ConvertUtil.toBigDecimal(productUpdateRequest.getBasePriceUSD());
-        this.modifiedBy = productUpdateRequest.getModifiedBy();
+        this.brandId = productUpdateRequest.brandId();
+        this.categoryId = productUpdateRequest.categoryId();
+        this.basePriceKRW = productUpdateRequest.basePriceKRW();
+        this.basePriceUSD = ConvertUtil.toBigDecimal(productUpdateRequest.basePriceUSD());
+        this.modifiedBy = productUpdateRequest.modifiedBy();
     }
 }

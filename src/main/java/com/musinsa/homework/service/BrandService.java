@@ -34,12 +34,12 @@ public class BrandService {
 
     @Transactional
     public void createBrand(BrandCreateRequest brandCreateRequest) {
-        if (brandRepository.countByTitleEnCaseInsensitive(brandCreateRequest.getTitleEn()) != 0) {
+        if (brandRepository.countByTitleEnCaseInsensitive(brandCreateRequest.titleEn()) != 0) {
             throw new ApiRuntimeException(BrandErrorType.CANNOT_CREATE_DUPLICATED_TITLE);
         }
 
         try {
-            var brand = new Brand(brandCreateRequest.getTitleKr(), brandCreateRequest.getTitleEn(), brandCreateRequest.getRegisteredBy());
+            var brand = new Brand(brandCreateRequest.titleKr(), brandCreateRequest.titleEn(), brandCreateRequest.registeredBy());
 
             brandRepository.save(brand);
         } catch (DataIntegrityViolationException e) {
@@ -52,7 +52,7 @@ public class BrandService {
         try {
             var brand = brandRepository.findById(brandId).orElseThrow(() -> new ApiRuntimeException(BrandErrorType.CANNOT_MODIFY_NOT_EXIST));
 
-            brand.modify(brandModifyRequest.getTitleKr(), brandModifyRequest.getTitleEn(), brandModifyRequest.getModifiedBy());
+            brand.modify(brandModifyRequest.titleKr(), brandModifyRequest.titleEn(), brandModifyRequest.modifiedBy());
 
             brandRepository.saveAndFlush(brand);
         } catch (DataIntegrityViolationException e) {

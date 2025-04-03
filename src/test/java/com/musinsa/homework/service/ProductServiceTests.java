@@ -61,8 +61,8 @@ class ProductServiceTests {
         assertAll(() -> assertThat(actual.getId()).isEqualTo(1L),
                 () -> assertThat(actual.getBrandId()).isEqualTo(brand.getId()),
                 () -> assertThat(actual.getCategoryId()).isEqualTo(category.getId()),
-                () -> assertThat(actual.getBasePriceKRW()).isEqualTo(request.getBasePriceKRW()),
-                () -> assertThat(actual.getBasePriceUSD()).isEqualTo(new BigDecimal(request.getBasePriceUSD())),
+                () -> assertThat(actual.getBasePriceKRW()).isEqualTo(request.basePriceKRW()),
+                () -> assertThat(actual.getBasePriceUSD()).isEqualTo(new BigDecimal(request.basePriceUSD())),
                 () -> assertThat(actual.getRegisteredBy()).isEqualTo(actual.getModifiedBy()),
                 () -> assertThat(actual.getRegisteredDateTime()).isNotNull(),
                 () -> assertThat(actual.getModifiedDateTime()).isNotNull(),
@@ -116,9 +116,9 @@ class ProductServiceTests {
         assertAll(() -> assertThat(actual.getId()).isEqualTo(1L),
                 () -> assertThat(actual.getBrandId()).isEqualTo(brand2.getId()),
                 () -> assertThat(actual.getCategoryId()).isEqualTo(2L),
-                () -> assertThat(actual.getBasePriceKRW()).isEqualTo(request.getBasePriceKRW()),
-                () -> assertThat(actual.getBasePriceUSD()).isEqualTo(new BigDecimal(request.getBasePriceUSD())),
-                () -> assertThat(actual.getModifiedBy()).isEqualTo(request.getModifiedBy()),
+                () -> assertThat(actual.getBasePriceKRW()).isEqualTo(request.basePriceKRW()),
+                () -> assertThat(actual.getBasePriceUSD()).isEqualTo(new BigDecimal(request.basePriceUSD())),
+                () -> assertThat(actual.getModifiedBy()).isEqualTo(request.modifiedBy()),
                 () -> assertThat(actual.getRegisteredBy()).isNotEqualTo(actual.getModifiedBy()),
                 () -> assertThat(actual.getModifiedDateTime().isAfter(actual.getRegisteredDateTime())).isTrue());
     }
