@@ -28,7 +28,7 @@ public class ProductController implements BaseApiController {
         if (productId < 0) {
             throw new ApiRuntimeException(DefaultErrorType.INVALID_PARAMETER);
         }
-        
+
         return productService.getProduct(productId);
     }
 
