@@ -7,6 +7,10 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_category_id", columnList = "categoryId"),
+        @Index(name = "idx_brand_id_category_id", columnList = "brandId, categoryId")
+})
 public class Product extends BaseBackOfficeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
