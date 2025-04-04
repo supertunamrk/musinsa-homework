@@ -1,26 +1,13 @@
 package com.musinsa.homework.dto.request;
 
-import com.musinsa.homework.enums.DefaultErrorType;
-import com.musinsa.homework.exception.ApiRuntimeException;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
-import java.math.BigDecimal;
-
-public record ProductCreateRequest(Long brandId, Long categoryId, Integer basePriceKRW, String basePriceUSD,
-                                   String registeredBy) {
-    public void checkValid() {
-        if (ObjectUtils.anyNull(brandId, categoryId, basePriceKRW, basePriceUSD)) {
-            throw new ApiRuntimeException(DefaultErrorType.INVALID_PARAMETER);
-        }
-
-        if (StringUtils.isBlank(registeredBy) || !NumberUtils.isCreatable(basePriceUSD)) {
-            throw new ApiRuntimeException(DefaultErrorType.INVALID_PARAMETER);
-        }
-
-        if (brandId < 1L || categoryId < 1L || basePriceKRW <= 0 || new BigDecimal(basePriceUSD).compareTo(BigDecimal.ZERO) < 0) {
-            throw new ApiRuntimeException(DefaultErrorType.INVALID_PARAMETER);
-        }
-    }
+public record ProductCreateRequest(@NotNull(message = "브랜드 ID 는 필수 입니다.") @Min(value = 1, message = "브랜드 ID 는 0 보다 큰 수여야 합니다.") Long brandId
+        , @NotNull(message = "카테고리 ID 는 필수 입니다.") @Min(value = 1, message = "카테고리 ID 는 0 보다 큰 수여야 합니다.") Long categoryId
+        , @NotNull(message = "원화 가격은 필수 입니다.") @Min(value = 1, message = "원화 가격은 0 보다 큰 수여야 합니다.") Integer basePriceKRW
+        , @NotBlank(message = "미화 가격 은 필수 입니다.") @Pattern(regexp = "^\\d+(\\.\\d{2})?$", message = "미화 가격은 소수점 두자리를 가지는 형태여야 합니다.") String basePriceUSD
+        , @NotBlank(message = "등록자명 은 필수 입니다.") String registeredBy) {
 }

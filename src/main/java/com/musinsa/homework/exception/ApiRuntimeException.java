@@ -8,11 +8,15 @@ public class ApiRuntimeException extends RuntimeException {
     private final String errorMessage;
 
     public ApiRuntimeException(ErrorType errorType) {
-        super(errorType.getMessage());
-
         this.successful = false;
         this.errorCode = errorType.getCode();
         this.errorMessage = errorType.getMessage();
+    }
+
+    public ApiRuntimeException(String errorCode, String errorMessage) {
+        this.successful = false;
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
     }
 
     public boolean isSuccessful() {
